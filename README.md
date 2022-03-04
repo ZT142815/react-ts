@@ -22,7 +22,17 @@
     npm文件主要用来设置项目的npm源，不在需要每个开发本地设置
     一般配置为：
     registry=https://registry.npm.taobao.org/
-##############
+## 配置EditorConfig
+    创建.eidtorconfig文件，安装EditorConfig for VS Code插件：快捷操作：command+shift+p召唤命令面板 输入：Generate .editorcofig
+    配置及说明
+    indent_style = space  缩进风格，可选配置有tab和space
+    indent_size = 2    缩进大小，可选1-8
+    charset = utf8    编码格式，通常是utf8
+    trim_trailing_whitespace = true    去除多余的空格
+    insert_final_newline = true    在尾部插入一行
+    end_of_line = lf   换行符
+    
+
 
 
 
