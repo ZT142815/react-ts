@@ -332,6 +332,73 @@
     },
   }
 
+## webpack配置
+### 安装webpack
+  我们在使用webpack之前，需要安装webpack和webpack-cli两个包
+  webpack:用于编译javascript模块
+  webpack-cli:用来在命令行中运行webpack
+    yarn add webpack webpack-cli
+### 创建配置文件夹
+  在跟目录下面创建script文件，在script文件夹下面创建config文件夹用来放置webpack配置文件
+  创建webpack.common.js文件
+  为了区分开发环境和生产环境，我们需要创建webpack.dev.js和webpack.prod.js配置文件;
+  在开发配置和生产配置中我们需要引入common配置，这个时候我们需要用到webpack-merge包；
+  `yarn add webpack-merge -D`
+  然后在webpack.dev.js中这样写；
+  `
+    const { merge } = require('webpack.merge')
+    const common = require('./webpack.commin.js')
+    module.exports = merge( common,{
+      mode: 'development'
+    })
+  `
+  在webpack.prod.js中这么写
+  `
+    const { merge } = require('webpack.merge')
+    const common = require('./webpack.commin.js')
+    module.exports = merge( common,{
+      mode: 'development'
+    })
+  `
+  下面我们可以创建npm命令：
+  `"build":"webpack --config ./script/config/webpack.dev.js"`
+  `"start":"webpack --config ./script/config/webpack.prod.js"`
+  
+
+  
+### webpack配置
+  ### input output配置
+    在webpack.common.js中添加配置
+    entry：定义入口文件路径
+    output：定义打包后的文件名和输出目录
+    `
+      const path = require('path')
+      module.exports = {
+        entry: {
+          app: path.resolve(__dirname, '../../src/app.ts'),
+        },
+        output: {
+          filename: 'js/[name].[hash:8].js',
+          path: path.resolve(__dirname, '../../dist'),
+        },
+      }
+    ` 
+  ### 配置公共变量：cross-env
+    cross-env可以跨平台设置和使用环境变量
+    安装
+    `yarn add cross-env -D`
+    修改npm命令
+    `"build":"cross-env NODE_ENV=development webpack --config ./script/config/webpack.dev.js"`
+    `"start":"cross-env NODE_ENV=production webpack --config ./script/config/webpack.prod.js"`
+    在script目录下创建一个constants.js目录用来保存公共变量
+  ### 配置本地开发服务器和实时查看页面
+    webpack-dev-server:可以本地起一个服务，通过简单配置可以指定端口和开启热更新
+    html-webpack-plugin:每一个页面都是需要html的，这个插件帮助我们将打包后的文件自动引入到html中
+    
+
+
+
+
 
 
 
