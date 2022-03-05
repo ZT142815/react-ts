@@ -298,6 +298,40 @@
     "wrap-iife": [2, "inside"],//立即执行函数表达式的小括号风格
     "wrap-regex": 0,//正则表达式字面量用小括号包起来
     "yoda": [2, "never"]//禁止尤达条件
+## 配置StyleLint：统一项目的样式代码风格
+### 安装依赖，添加配置
+  yarn add stylelint stylelint-config-standard -D
+### 添加配置
+  新建一个.stylelintrc.js文件，添加下面的配置
+  module.exports = {
+    //扩展，使用stylelint定义好的规则
+    extends: ['stylelint-config-standard'],
+    //具体的规则
+    rules: {
+      'comment-empty-line-before': null,
+      'declaration-empty-line-before': null,
+      'function-name-case': 'lower',
+      'no-descending-specificity': null,
+      'no-invalid-double-slash-comments': null,
+      'rule-empty-line-before': 'always',
+    },
+    ignoreFiles: ['node_modules/**/*', 'build/**/*'],
+  }
+### 安装插件：stylelint
+  在setting.json中添加下面代码
+  {
+    // 使用 stylelint 自身的校验即可
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+    
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.fixAll.stylelint": true
+    },
+  }
+
 
 
 

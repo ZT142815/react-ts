@@ -29,4 +29,5 @@ node_modules
 dist
 build
 .vscode
+package-lock.json
 
