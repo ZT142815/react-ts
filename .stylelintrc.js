@@ -9,4 +9,4 @@ module.exports = {
     'rule-empty-line-before': 'always',
   },
   ignoreFiles: ['node_modules/**/*', 'build/**/*'],
-}
+};

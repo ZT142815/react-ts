@@ -344,7 +344,7 @@
   为了区分开发环境和生产环境，我们需要创建webpack.dev.js和webpack.prod.js配置文件;
   在开发配置和生产配置中我们需要引入common配置，这个时候我们需要用到webpack-merge包；
   yarn add webpack-merge -D
-  
+
   然后在webpack.dev.js中这样写；
 
     const { merge } = require('webpack.merge')
@@ -423,6 +423,219 @@
       devtool: 'eval-source-map'
     在生产环节中我们不需要定位源码这个功能：
       devtool: 'none'
+
+  ### 每次打包前清空之前的打包文件
+    webapck5在output中新加了clean属性我们在common配置文件中加入clean属性
+    clean: {
+      keep: /dll/, //打包前清空之前的打包
+    },
+
+  ### 处理项目中的各种文件
+  #### 用法
+    文件处理我们写在module模块下的rules中：
+    test用来匹配文件，对符合符合规则的文件做处理；
+    use：可以是字符串、可以是数组、可以是对象
+  #### 处理less文件
+    处理css文件我们需要用到style-loader、css-loader、less-loader、postcss-loader(用来处理浏览器兼容问题)
+      yarn add style-loader css-loader less-loader
+    在common中添加配置：
+      module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: {
+              'style-loader',
+              'css-loader',
+              'postcss-loader',
+              'less-loader',
+            }
+          }
+        ]
+      }
+  #### 处理图片和字体文件
+    处理图片和字体文件我们需要用到：file-loader、url-loader
+      yarn add file-loader url-loader -D
+    在common中添加配置：
+      module: {
+        rules: [
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            use: {
+              loader: 'url-loader',
+              option: {
+                limit: 10 * 1024,
+                name: '[name].[contenthash:8].[ext]',
+                outputPath: 'assets/images'
+              }
+            }
+          },
+          {
+            test: /\.(ttf|woff|woff2|eot|otf)$/,
+            use: [
+                    {
+                      loader: 'url-loader',
+                      options: {
+                      name: '[name].[contenthash:8].[ext]',
+                      outputPath: 'assets/fonts',
+                    },
+                  },
+                ],
+              },
+            ]
+          }
+
+## 项目引入react
+### 安装react
+  安装react、react-dom
+  yarn add react react-dom
+
+### 添加处理js、jsx的loader
+  安装babel-loader、@babel/core、@babel/preset-react
+  yarn add babel-loader @babel/core @babel/preset-react
+  1、在项目中新建.babelrc文件，添加配置
+    {
+      "presets": ["@babel/preset-react"]
+    }
+  2、在webpack.common.js文件中添加处理js、tsx文件的loader
+    {
+      test: /\.(tsx?|js)$/,
+      loader: babel-loader,
+      options: {cacheDirectory:true},
+      exclude: /node_modules/,
+    }
+
+## 项目中引入type-script
+  ### 安装ts和对应的babel插件
+    yarn add typescript
+    yarn add @babel/preset-typescript -D
+  ### 添加配置
+    在.babelrc中添加配置
+      {
+        "presets": ["@babel/preset-react", "@babel/preset-typescript"]
+      }
+  ### 添加react的类型声明
+    yarn add @types/react @types/react-dom -D
+
+## 插入webpack配置resolve
+  extensions可以在引入的时候省略后缀名
+  resolve: {
+    extensions: ['.tsx','.ts','.js','.json']
+  }
+
+## 配置tsconfig.json文件
+  tsconfig.json文件作用：
+    1、编译指定的文件
+    2、定义编译选项
+  生成tsconsig.json文件
+    tsc --init
+  tsconfig.json文件配置解释：
+    compilerOptions:用来配置编译选项；
+    exclude:指定了不需要编译的文件
+    include:指定需要编译的文件
+  compilerOptions配置解释
+    isolatedModules:可以提供额外的一些语法检查
+    esModuleInterop:允许我们导入符合es6模块规范的commonjs模块
+    baseUrl：
+    paths：
+## babel的更多配置
+  1、我们现在编译完的代码依旧是es6的语法，但是有的浏览器是不支持es6的，那么我们就需要@babel/preset-env来给我们的代码转到目标浏览器环境了
+  2、但是遇到Promise或者.includes这种新特性是没有办法转到es5的，这个时候我们就需要@babel/plugin-transform-runtime这个插件来实现；
+    yarn add @babel/perset-env -D
+    yarn add @babel/plugin-transform-runtime
+  3、修改.babelrc的配置
+    {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            // 防止babel将任何模块类型都转译成CommonJS类型，导致tree-shaking失效问题
+            "modules": false
+          }
+        ],
+        "@babel/preset-react",
+        "@babel/preset-typescript"
+      ],
+      "plungins": [
+        [
+          "@babel/plugin-transform-runtime",
+          {
+            "corejs": {
+              "version": 3,
+              "proposals": true
+            },
+            "useESModules": true
+          }
+        ]
+      ]
+    }
+
+## webpack公共环境优化
+  ### 拷贝公共静态资源
+    使用copy-webpack-plugin插件时间
+      yarn add copy-webpack-plugin -D
+    修改webpack.common.js文件
+      plugins: [
+        new CopyPlugin({
+          patterns: [
+            {
+              context: resolve(__dirname,'./plulic'),
+              from: '*',
+              to: resolve(__dirname,'./dist'),
+              toType: 'dir'
+            }
+          ]
+        })
+      ]
+  ### 显示编译进度
+    使用webapckbar插件
+      yarn add webpackbar -D
+    修改webpack.common.js文件
+      plugins: [
+        new WebpackBar({
+          name: isDev ? '正在启动' : '正在打包',
+          color: 'red'
+        })
+      ]
+
+  ### 代码编译阶段添加typescript类型检查
+    使用fork-ts-checker-webapck-plugin
+      yarn add fork-ts-checker-webapck-plugin -D
+    修改webapck.common.js文件
+      plugins: [
+        new ForkTsCheckerWebpackPlugin({
+          configFile: path.resolve(__dirname,'tsconfig.json')
+        })
+      
+  ### 提高二次编译速度
+    使用webpack内置的cache属性
+    修改webpack.common.js文件
+      cache: {
+        type: "filesystem"
+      }
+
+  ### 减小打包体积
+    我们在开发或者生产的时候，都要经过webpack将react、react-dom代码打进生成的代码中，我们可以使用cdn链接形式
+    修改webpack.common.js文件
+      externals: {
+        'react': 'React',
+        'react-dom': ReactDom,
+      }
+  ### 抽离公共代码
+    抽离公共代码这一块可以看下面的文章：
+    https://juejin.cn/post/6844904001792655373
+    
+    
+
+
+
+
+
+  
+
+
+
+
+
 
 
 

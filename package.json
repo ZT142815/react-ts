@@ -15,22 +15,45 @@
   "homepage": "https://github.com/ZT142815/react-ts#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --config ./script/config/webpack.dev.js",
-    "build": "webpack --config ./script/config/webpack.prod.js"
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config ./script/config/webpack.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config ./script/config/webpack.prod.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
+    "babel-loader": "^8.2.3",
+    "copy-webpack-plugin": "^10.2.4",
     "cross-env": "^7.0.3",
+    "css-loader": "^6.7.0",
     "eslint": "^8.10.0",
     "eslint-plugin-react": "^7.29.3",
+    "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.1",
     "html-webpack-plugin": "^5.5.0",
+    "jquery": "^3.6.0",
+    "less-loader": "^10.2.0",
+    "postcss-loader": "^6.2.1",
     "prettier": "^2.5.1",
+    "style-loader": "^3.3.1",
     "stylelint": "^14.5.3",
     "stylelint-config-standard": "^25.0.0",
+    "url-loader": "^4.1.1",
     "webpack": "^5.70.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^5.8.0",
+    "webpackbar": "^5.0.2"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.6.2"
   }
 }
