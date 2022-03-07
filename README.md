@@ -343,23 +343,23 @@
   创建webpack.common.js文件
   为了区分开发环境和生产环境，我们需要创建webpack.dev.js和webpack.prod.js配置文件;
   在开发配置和生产配置中我们需要引入common配置，这个时候我们需要用到webpack-merge包；
-  `yarn add webpack-merge -D`
+  yarn add webpack-merge -D
+  
   然后在webpack.dev.js中这样写；
-  `
+
     const { merge } = require('webpack.merge')
     const common = require('./webpack.commin.js')
     module.exports = merge( common,{
       mode: 'development'
     })
-  `
+
   在webpack.prod.js中这么写
-  `
     const { merge } = require('webpack.merge')
     const common = require('./webpack.commin.js')
     module.exports = merge( common,{
       mode: 'development'
     })
-  `
+
   下面我们可以创建npm命令：
   `"build":"webpack --config ./script/config/webpack.prod.js"`
   `"start":"webpack-dev-server --config ./script/config/webpack.dev.js"`
@@ -371,7 +371,6 @@
     在webpack.common.js中添加配置
     entry：定义入口文件路径
     output：定义打包后的文件名和输出目录
-    `
       const path = require('path')
       module.exports = {
         entry: {
@@ -382,20 +381,19 @@
           path: path.resolve(__dirname, '../../dist'),
         },
       }
-    ` 
+    
   ### 配置公共变量：cross-env
     cross-env可以跨平台设置和使用环境变量
     安装
-    `yarn add cross-env -D`
+    yarn add cross-env -D
     修改npm命令
-    `"build":"cross-env NODE_ENV=development webpack --config ./script/config/webpack.dev.js"`
-    `"start":"cross-env NODE_ENV=production webpack --config ./script/config/webpack.prod.js"`
+    "build":"cross-env NODE_ENV=development webpack --config ./script/config/webpack.dev.js"
+    "start":"cross-env NODE_ENV=production webpack --config ./script/config/webpack.prod.js"
     在script目录下创建一个constants.js目录用来保存公共变量
   ### 配置本地开发服务器和实时查看页面
     webpack-dev-server:可以本地起一个服务，通过简单配置可以指定端口和开启热更新
     html-webpack-plugin:每一个页面都是需要html的，这个插件帮助我们将打包后的文件自动引入到html中
     配置webpack-dev-server：
-      `
         devServer: {
           host: localhost   不配置默认是localhost
           port: 8080    指定端口，默认8080
@@ -405,9 +403,7 @@
           open: true, // 打开默认浏览器
           hot: true, // 热更新
         }
-      `
     配置html-webpack-plugin:
-      `
         plugins: [
           new HtmlWebpackPlugin({
             titel: "development",
@@ -421,14 +417,13 @@
             }
           })
         ]
-      `
   ### 配置devtool
     devtool中的一些配置，可以帮助我们将编译后的代码映射回原来的代码，这个对我们开发调试特别重要，但是不同的配置会影响到我们的构建速度和重新构建速度；
     因此通常我们在开发环境中这么配置：
-      `devtool: 'eval-source-map'`
+      devtool: 'eval-source-map'
     在生产环节中我们不需要定位源码这个功能：
-      `devtool: 'none'`
-      
+      devtool: 'none'
+
 
 
 
