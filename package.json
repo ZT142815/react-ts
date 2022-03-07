@@ -14,7 +14,9 @@
   },
   "homepage": "https://github.com/ZT142815/react-ts#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --config ./script/config/webpack.dev.js",
+    "build": "webpack --config ./script/config/webpack.prod.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.13.0",
@@ -22,6 +24,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.10.0",
     "eslint-plugin-react": "^7.29.3",
+    "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.5.1",
     "stylelint": "^14.5.3",
     "stylelint-config-standard": "^25.0.0",

@@ -361,8 +361,8 @@
     })
   `
   下面我们可以创建npm命令：
-  `"build":"webpack --config ./script/config/webpack.dev.js"`
-  `"start":"webpack --config ./script/config/webpack.prod.js"`
+  `"build":"webpack --config ./script/config/webpack.prod.js"`
+  `"start":"webpack-dev-server --config ./script/config/webpack.dev.js"`
   
 
   
@@ -394,7 +394,42 @@
   ### 配置本地开发服务器和实时查看页面
     webpack-dev-server:可以本地起一个服务，通过简单配置可以指定端口和开启热更新
     html-webpack-plugin:每一个页面都是需要html的，这个插件帮助我们将打包后的文件自动引入到html中
-    
+    配置webpack-dev-server：
+      `
+        devServer: {
+          host: localhost   不配置默认是localhost
+          port: 8080    指定端口，默认8080
+          stats: 'errors-only', // 终端仅打印 error
+          clientLogLevel: 'silent', // 日志等级
+          compress: true, // 是否启用 gzip 压缩
+          open: true, // 打开默认浏览器
+          hot: true, // 热更新
+        }
+      `
+    配置html-webpack-plugin:
+      `
+        plugins: [
+          new HtmlWebpackPlugin({
+            titel: "development",
+            template: resolve(__dirname,'./index.html'),
+            filename: 'index.html',
+            cache: fale, // 特别重要：防止之后使用v6版本 copy-webpack-plugin 时代码修改一刷新页面为空问题。
+            //压缩html
+            minify: {
+              collapseWhitespace: true,  //压缩空格
+              removeComments: true,  //去除注释
+            }
+          })
+        ]
+      `
+  ### 配置devtool
+    devtool中的一些配置，可以帮助我们将编译后的代码映射回原来的代码，这个对我们开发调试特别重要，但是不同的配置会影响到我们的构建速度和重新构建速度；
+    因此通常我们在开发环境中这么配置：
+      `devtool: 'eval-source-map'`
+    在生产环节中我们不需要定位源码这个功能：
+      `devtool: 'none'`
+      
+
 
 
 
