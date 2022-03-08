@@ -624,7 +624,99 @@
     抽离公共代码这一块可以看下面的文章：
     https://juejin.cn/post/6844904001792655373
     
+## webpack开发环境优化
+  ### 优化热更新
+    1、将devServer下的hot属性设为true
+    2、新增webpack.HotModuleReplacementPlugin插件
+      plugins: [
+        new webpack.HotModuleReplacementPlugin()
+      ]
+    3、修改入口文件
+      if (module && module.hot) {
+        module.hot.accept()
+      }
+      需要安装@types/webpack-env
+      yarn add @types/webpack-env -D
+  ### 配置代理，处理跨域
+    1、创建接口代理配置文件setProxy.js
+      const proxySettings = {
+        // 接口代理1
+        '/api/': {
+          target: 'http://198.168.111.111:3001',
+          changeOrigin: true,
+        },
+        // 接口代理2
+        '/api-2/': {
+          target: 'http://198.168.111.111:3002',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api-2': '',
+          },
+        },
+        // .....
+      }
+      module.exports = proxySettings
+    2、在devServer中添加proxy配置
+      proxy: {...proxySettings}
+
+## webpack生产环境优化
+  ### 抽离css样式
+    下载插件mini-css-extract-plugin
+      yarn add mini-css-extract-plugin -D
+    修改webpack.common.js文件
+      plugins: [
+        !isDev && new MiniCssExtractPlugin({
+          filename: 'css/[name].[contenthash:8].css',
+          chunkFilename: 'css/[name].[contenthash:8].css',
+          ignoreOrder: false
+        })
+      ]
+  ### 去除无用样式
+    需要用到插件：prugecss-webpack-plugin 和路径查找利器：glob
+      yarn add prugecss-webpack-plugin glob -D
+    修改webpack.prod.js文件
+      plugins: [
+        new PurgeCssPlugin({
+          paths: glob.sync(`${resolve(PROJECT_PATH, './src')}/**/*.{tsx,scss,less,css}`, { nodir: true }),
+          whitelist: ['html','body']
+        })
+      ]
+  ### js代码压缩
+    插件：terser-webpack-plugin
+      yarn add terser-webpack-plugin -D
+    修改webpack.common.js配置
+      optimization: {
+        minimize: !isDev,
+        minimizer: [
+          !idDev && new TerserPlugin({
+            extractComments: false,
+            terserOptions: {
+              compress: {pure_funcs: ['console.log']}
+            }
+          })
+        ].filter(Boolean),
+      }
+    minize:false表示不压缩代码
+    extractCommnet：false表示去掉所注释
+    pure_funcs：可以设置我们想要去除的函数
+  ### css代码压缩
+    插件：optimize-css-assets-webpack-plugin
+      yarn add optimize-css-assets-webpack-plugin
+    修改config.common.js配置
+      optimization: {
+        minizer: [
+          !isDev && new OptimizeCssAssetsPlugin()
+        ]
+      }
     
+
+    
+
+
+
+      
+  
+
 
 
 
