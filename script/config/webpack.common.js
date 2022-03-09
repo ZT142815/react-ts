@@ -32,19 +32,19 @@ module.exports = {
     type: 'filesystem',
   },
   optimization: {
-    minimize: !isDev,
-    minimizer: [
-      !isDev &&
-        new TerserPlugin({
-          extractComments: false,
-          terserOptions: {
-            compress: {
-              pure_funcs: ['console.log'],
-            },
-          },
-        }),
-      // !isDev && new OptimizeCssAssetsWebpackPlugin(),
-    ],
+    // minimize: !isDev,
+    // minimizer: [
+    //   !isDev &&
+    //     new TerserPlugin({
+    //       extractComments: false,
+    //       terserOptions: {
+    //         compress: {
+    //           pure_funcs: ['console.log'],
+    //         },
+    //       },
+    //     }),
+    //   !isDev && new OptimizeCssAssetsWebpackPlugin(),
+    // ],
     splitChunks: {
       cacheGroups: {
         default: {
@@ -124,11 +124,11 @@ module.exports = {
       color: '#fa8c16',
     }),
     new ForkTsCheckerWebpackPlugin(),
-    !isDev &&
-      new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash:8].css',
-        chunkFilename: 'css/[name].[contenthash:8].css',
-        ignoreOrder: false,
-      }),
+    // !isDev &&
+    //   new MiniCssExtractPlugin({
+    //     filename: 'css/[name].[contenthash:8].css',
+    //     chunkFilename: 'css/[name].[contenthash:8].css',
+    //     ignoreOrder: false,
+    //   }),
   ],
 };

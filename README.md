@@ -708,6 +708,10 @@
           !isDev && new OptimizeCssAssetsPlugin()
         ]
       }
+
+## 项目报错解决
+  ### 引入react hooks报错
+    yarn add core-js@2 -D
     
 
     
