@@ -48,7 +48,7 @@ module.exports = {
     type: 'filesystem',
   },
   optimization: {
-    minimize: !isDev,
+    // minimize: !isDev,
     minimizer: [
       (compiler) => {
         if (!isDev) {
@@ -81,45 +81,47 @@ module.exports = {
     },
   },
   module: {
-    rules: {
-      oneOf: [
-        {
-          test: /\.(tsx?|js)$/,
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-          },
-          exclude: /node_modules/,
-        },
-        {
-          test: /\.(css|less)$/,
-          use: getCssLoader(),
-        },
-        {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-          use: {
-            loader: 'url-loader',
+    rules: [
+      {
+        oneOf: [
+          {
+            test: /\.(tsx?|js)$/,
+            loader: 'babel-loader',
             options: {
-              limit: 10 * 1024,
-              name: '[name].[contenthash:8].[ext]',
-              outputPath: 'assets/images',
+              cacheDirectory: true,
             },
+            exclude: /node_modules/,
           },
-        },
-        {
-          test: /\.(ttf|woff|woff2|eot|otf)$/,
-          use: [
-            {
+          {
+            test: /\.(css|less)$/,
+            use: getCssLoader(),
+          },
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            use: {
               loader: 'url-loader',
               options: {
+                limit: 10 * 1024,
                 name: '[name].[contenthash:8].[ext]',
-                outputPath: 'assets/fonts',
+                outputPath: 'assets/images',
               },
             },
-          ],
-        },
-      ],
-    },
+          },
+          {
+            test: /\.(ttf|woff|woff2|eot|otf)$/,
+            use: [
+              {
+                loader: 'url-loader',
+                options: {
+                  name: '[name].[contenthash:8].[ext]',
+                  outputPath: 'assets/fonts',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebapckPlugin({
