@@ -16,5 +16,6 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'no-alert': 'error',
+    'react/display-name': [2],
   },
 };

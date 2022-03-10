@@ -1,15 +1,31 @@
 const path = require('path');
 const HtmlWebapckPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const WebapckBar = require('webpackbar');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const { isDev } = require('../constants');
+const chalk = require('chalk');
 
 const getCssLoader = () => {
-  return [isDev ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader'];
+  return [
+    {
+      loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'less-loader',
+      options: {
+        lessOptions: {
+          javascriptEnabled: true,
+        },
+      },
+    },
+  ];
 };
 
 module.exports = {
@@ -34,16 +50,19 @@ module.exports = {
   optimization: {
     minimize: !isDev,
     minimizer: [
-      !isDev &&
-        new TerserPlugin({
-          extractComments: false,
-          terserOptions: {
-            compress: {
-              pure_funcs: ['console.log'],
+      (compiler) => {
+        if (!isDev) {
+          new TerserPlugin({
+            extractComments: false,
+            terserOptions: {
+              compress: {
+                pure_funcs: ['console.log'],
+              },
             },
-          },
-        }),
-      !isDev && new OptimizeCssAssetsWebpackPlugin(),
+          }).apply(compiler);
+          new OptimizeCssAssetsWebpackPlugin().apply(compiler);
+        }
+      },
     ],
     splitChunks: {
       cacheGroups: {
@@ -62,43 +81,45 @@ module.exports = {
     },
   },
   module: {
-    rules: [
-      {
-        test: /\.(tsx?|js)$/,
-        loader: 'babel-loader',
-        options: {
-          cacheDirectory: true,
-        },
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.(css|less)$/,
-        use: getCssLoader(),
-      },
-      {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-        use: {
-          loader: 'url-loader',
+    rules: {
+      oneOf: [
+        {
+          test: /\.(tsx?|js)$/,
+          loader: 'babel-loader',
           options: {
-            limit: 10 * 1024,
-            name: '[name].[contenthash:8].[ext]',
-            outputPath: 'assets/images',
+            cacheDirectory: true,
           },
+          exclude: /node_modules/,
         },
-      },
-      {
-        test: /\.(ttf|woff|woff2|eot|otf)$/,
-        use: [
-          {
+        {
+          test: /\.(css|less)$/,
+          use: getCssLoader(),
+        },
+        {
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          use: {
             loader: 'url-loader',
             options: {
+              limit: 10 * 1024,
               name: '[name].[contenthash:8].[ext]',
-              outputPath: 'assets/fonts',
+              outputPath: 'assets/images',
             },
           },
-        ],
-      },
-    ],
+        },
+        {
+          test: /\.(ttf|woff|woff2|eot|otf)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                name: '[name].[contenthash:8].[ext]',
+                outputPath: 'assets/fonts',
+              },
+            },
+          ],
+        },
+      ],
+    },
   },
   plugins: [
     new HtmlWebapckPlugin({
@@ -111,6 +132,11 @@ module.exports = {
         removeComments: true,
       },
     }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].[contenthash:8].css',
+      chunkFilename: 'css/[name].[contenthash:8].css',
+      ignoreOrder: false,
+    }),
     new CopyPlugin({
       patterns: [
         {
@@ -119,16 +145,11 @@ module.exports = {
         },
       ],
     }),
-    new WebapckBar({
-      name: isDev ? '正在启动' : '正在打包',
-      color: '#fa8c16',
+    new ProgressBarPlugin({
+      width: 200,
+      format: `  :msg [:bar] ${chalk.green.bold(':percent')} (:elapsed s)`,
+      clear: false,
     }),
     new ForkTsCheckerWebpackPlugin(),
-    !isDev &&
-      new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash:8].css',
-        chunkFilename: 'css/[name].[contenthash:8].css',
-        ignoreOrder: false,
-      }),
   ],
 };
