@@ -15,7 +15,7 @@
   "homepage": "https://github.com/ZT142815/react-ts#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=development webpack-dev-server --config ./script/config/webpack.dev.js",
+    "start": "./node_modules/.bin/cross-env NODE_ENV=development && ./node_modules/.bin/webpack-dev-server --config ./script/config/webpack.dev.js",
     "build": "cross-env NODE_ENV=production webpack --config ./script/config/webpack.prod.js"
   },
   "devDependencies": {

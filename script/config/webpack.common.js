@@ -5,7 +5,7 @@ const WebapckBar = require('webpackbar');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-// const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const { isDev } = require('../constants');
 
 const getCssLoader = () => {
@@ -32,19 +32,19 @@ module.exports = {
     type: 'filesystem',
   },
   optimization: {
-    // minimize: !isDev,
-    // minimizer: [
-    //   !isDev &&
-    //     new TerserPlugin({
-    //       extractComments: false,
-    //       terserOptions: {
-    //         compress: {
-    //           pure_funcs: ['console.log'],
-    //         },
-    //       },
-    //     }),
-    //   !isDev && new OptimizeCssAssetsWebpackPlugin(),
-    // ],
+    minimize: !isDev,
+    minimizer: [
+      !isDev &&
+        new TerserPlugin({
+          extractComments: false,
+          terserOptions: {
+            compress: {
+              pure_funcs: ['console.log'],
+            },
+          },
+        }),
+      !isDev && new OptimizeCssAssetsWebpackPlugin(),
+    ],
     splitChunks: {
       cacheGroups: {
         default: {
@@ -124,11 +124,11 @@ module.exports = {
       color: '#fa8c16',
     }),
     new ForkTsCheckerWebpackPlugin(),
-    // !isDev &&
-    //   new MiniCssExtractPlugin({
-    //     filename: 'css/[name].[contenthash:8].css',
-    //     chunkFilename: 'css/[name].[contenthash:8].css',
-    //     ignoreOrder: false,
-    //   }),
+    !isDev &&
+      new MiniCssExtractPlugin({
+        filename: 'css/[name].[contenthash:8].css',
+        chunkFilename: 'css/[name].[contenthash:8].css',
+        ignoreOrder: false,
+      }),
   ],
 };
